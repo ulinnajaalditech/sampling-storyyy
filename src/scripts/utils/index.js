@@ -62,7 +62,10 @@ export function convertBase64ToUint8Array(base64String) {
 }
 
 export function setupSkipToContent(element, mainContent) {
-  element.addEventListener("click", () => mainContent.focus());
+  element.addEventListener("click", () => {
+    element.blur();
+    mainContent.focus();
+  });
 }
 
 export function transitionHelper({ skipTransition = false, updateDOM }) {

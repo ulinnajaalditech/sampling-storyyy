@@ -2,58 +2,75 @@ import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
 import { generateNavigation, generateNavigationAfterLogin } from "../template";
 import { getAccessToken } from "../utils/auth";
-import { transitionHelper } from "../utils/index";
+import { setupSkipToContent, transitionHelper } from "../utils/index";
 
 class App {
   #content = null;
   #drawerButton = null;
   #navigationDrawer = null;
+  #mobileDrawerContainer = null;
+  #skipToContentButton = null;
+  #mobileDrawerContent = null;
 
-  constructor({ navigationDrawer, drawerButton, content }) {
+  constructor({
+    navigationDrawer,
+    drawerButton,
+    content,
+    mobileDrawerContainer,
+    skipToContentButton,
+    mobileDrawerContent,
+  }) {
     this.#content = content;
     this.#drawerButton = drawerButton;
     this.#navigationDrawer = navigationDrawer;
+    this.#mobileDrawerContainer = mobileDrawerContainer;
+    this.#skipToContentButton = skipToContentButton;
+    this.#mobileDrawerContent = mobileDrawerContent;
 
+    this.#init();
+  }
+
+  #init() {
+    setupSkipToContent(this.#skipToContentButton, this.#content);
     this.#setupDrawer();
   }
 
   #setupNavigationList() {
     const login = getAccessToken();
     if (!login) {
-      console.log("aku belum login");
       this.#navigationDrawer.innerHTML = generateNavigation();
+      this.#mobileDrawerContainer.querySelector(
+        "#mobile-navigation-drawer-content",
+      ).innerHTML = generateNavigation();
       return;
     }
     this.#navigationDrawer.innerHTML = generateNavigationAfterLogin();
-    console.log("akulogin");
+    this.#mobileDrawerContainer.querySelector(
+      "#mobile-navigation-drawer-content",
+    ).innerHTML = generateNavigationAfterLogin();
   }
 
   #setupDrawer() {
-    // this.#drawerButton.addEventListener("click", () => {
-    //   this.#navigationDrawer.classList.toggle("open");
-    // });
-    // document.body.addEventListener("click", (event) => {
-    //   if (
-    //     !this.#navigationDrawer.contains(event.target) &&
-    //     !this.#drawerButton.contains(event.target)
-    //   ) {
-    //     this.#navigationDrawer.classList.remove("open");
-    //   }
-    //   this.#navigationDrawer.querySelectorAll("a").forEach((link) => {
-    //     if (link.contains(event.target)) {
-    //       this.#navigationDrawer.classList.remove("open");
-    //     }
-    //   });
-    // });
+    this.#drawerButton.addEventListener("click", () => {
+      this.#mobileDrawerContainer.setAttribute("aria-hidden", "false");
+
+      this.#mobileDrawerContainer.classList.remove("-right-100");
+      this.#mobileDrawerContainer.classList.add("right-0");
+    });
+
+    this.#mobileDrawerContainer
+      .querySelector("#mobile-drawer-close")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.#mobileDrawerContainer.setAttribute("aria-hidden", "true");
+
+        this.#mobileDrawerContainer.classList.add("-right-100");
+        this.#mobileDrawerContainer.classList.remove("right-0");
+      });
+
+    console.log(this.#mobileDrawerContent.querySelectorAll("a"));
   }
-
-  //   async renderPage() {
-  //     const url = getActiveRoute();
-  //     const page = routes[url];
-
-  //     this.#content.innerHTML = await page.render();
-  //     await page.afterRender();
-  //   }
 
   async renderPage() {
     const url = getActiveRoute();
