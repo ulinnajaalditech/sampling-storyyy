@@ -14,3 +14,22 @@ export const generateNavigationAfterLogin = () => {
         </div>
     `;
 };
+
+export const storyCard = (story) => {
+  return `
+     <div class="card">
+        <p class="text-3xl">${story.name}</p>
+        <div class="relative h-40 w-auto bg-white">
+          <img
+            src="${story.photoUrl}"
+            alt="${story.name}"
+            class="w-full h-full object-contain border"
+          />
+        </div>
+        <p>${story.description}</p>
+        <div>
+          <p>${new Date(story.createdAt).toLocaleDateString()}</p>
+        </div>
+      </div>
+    `;
+};

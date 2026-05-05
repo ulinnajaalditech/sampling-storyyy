@@ -1,7 +1,9 @@
+import "toastify-js/src/toastify.css";
+
 import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
 import { generateNavigation, generateNavigationAfterLogin } from "../template";
-import { getAccessToken } from "../utils/auth";
+import { getAccessToken, removeAccessToken } from "../utils/auth";
 import { setupSkipToContent, transitionHelper } from "../utils/index";
 
 class App {
@@ -35,17 +37,36 @@ class App {
 
   #setupNavigationList() {
     const login = getAccessToken();
+    const mobileContainer = this.#mobileDrawerContainer.querySelector(
+      "#mobile-navigation-drawer-content",
+    );
+
     if (!login) {
       this.#navigationDrawer.innerHTML = generateNavigation();
-      this.#mobileDrawerContainer.querySelector(
-        "#mobile-navigation-drawer-content",
-      ).innerHTML = generateNavigation();
+      mobileContainer.innerHTML = generateNavigation();
     } else {
       this.#navigationDrawer.innerHTML = generateNavigationAfterLogin();
-      this.#mobileDrawerContainer.querySelector(
-        "#mobile-navigation-drawer-content",
-      ).innerHTML = generateNavigationAfterLogin();
+      mobileContainer.innerHTML = generateNavigationAfterLogin();
+      this.#navigationDrawer
+        .querySelector("#logout-button")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          removeAccessToken();
+          location.reload();
+        });
+      mobileContainer
+        .querySelector("#logout-button")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          removeAccessToken();
+          location.reload();
+        });
     }
+
     this.#attachMobileNavLinkListeners();
   }
 

@@ -1,10 +1,57 @@
-import CONFIG from '../config';
+import CONFIG from "../config";
+import { getAccessToken } from "../utils/auth";
 
 const ENDPOINTS = {
-  ENDPOINT: `${CONFIG.BASE_URL}/your/endpoint/here`,
+  REGISTER: `${CONFIG.BASE_URL}/register`,
+  LOGIN: `${CONFIG.BASE_URL}/login`,
+  STORIES: (page = 1, size = 10, location = 0) =>
+    `${CONFIG.BASE_URL}/stories?page=${page}&size=${size}&location=${location}`,
+};
+export const AuthUserRegister = async (value) => {
+  const response = await fetch(ENDPOINTS.REGISTER, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(value),
+  });
+  const result = await response.json();
+
+  return result.message;
 };
 
-export async function getData() {
-  const fetchResponse = await fetch(ENDPOINTS.ENDPOINT);
-  return await fetchResponse.json();
-}
+export const AuthUserLogin = async (value) => {
+  const response = await fetch(ENDPOINTS.LOGIN, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(value),
+  });
+
+  const result = await response.json();
+
+  if (result?.error) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};
+
+export const GetStories = async () => {
+  const response = await fetch(ENDPOINTS.STORIES(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+
+  const result = await response.json();
+
+  if (result?.error) {
+    throw new Error(result.message);
+  }
+
+  return result;
+};

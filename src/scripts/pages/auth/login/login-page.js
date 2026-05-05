@@ -1,11 +1,17 @@
+import LoginPresenter from "./login-presenter";
+import * as StoryAPI from "../../../data/api";
+import * as AuthUtils from "../../../utils/auth";
+
 export default class LoginPage {
+  #presenter = null;
+
   async render() {
     return `
     <section
       class="max-w-md mx-auto min-h-[80vh] mt-20 flex flex-col gap-5 items-center justify-center"
     >
       <h1 class="text-4xl font-bold">Login to Storyyy</h1>
-      <form class="flex flex-col gap-4 card px-6 py-4 w-full">
+      <form id="login-form" class="flex flex-col gap-4 card px-6 py-4 w-full">
         <div class="flex flex-col gap-2">
           <label for="email" class="cs-label"> Email </label>
           <input
@@ -26,13 +32,46 @@ export default class LoginPage {
             placeholder="Masukan password kamu"
           />
         </div>
-        <button class="btn btn-primary">Login</button>
+        <button id="login-btn" class="btn btn-primary">Login</button>
       </form>
     </section>
     `;
   }
 
   async afterRender() {
-    // Do your job here
+    this.#presenter = new LoginPresenter({
+      view: this,
+      model: StoryAPI,
+      authModel: AuthUtils,
+    });
+
+    this.setupForm();
+  }
+
+  setupForm() {
+    const form = document.getElementById("login-form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const data = {
+        email: document.getElementById("email")?.value,
+        password: document.getElementById("password")?.value,
+      };
+
+      this.#presenter.onLogin(data);
+    });
+  }
+
+  showLoader() {
+    const btn = document.getElementById("login-btn");
+    btn.innerHTML = "Loading...";
+    btn.setAttribute("disabled", "true");
+  }
+
+  hideLoader() {
+    const btn = document.getElementById("login-btn");
+    btn.innerHTML = "Login";
+    btn.removeAttribute("disabled");
   }
 }
