@@ -10,7 +10,6 @@ class App {
   #navigationDrawer = null;
   #mobileDrawerContainer = null;
   #skipToContentButton = null;
-  #mobileDrawerContent = null;
 
   constructor({
     navigationDrawer,
@@ -18,14 +17,12 @@ class App {
     content,
     mobileDrawerContainer,
     skipToContentButton,
-    mobileDrawerContent,
   }) {
     this.#content = content;
     this.#drawerButton = drawerButton;
     this.#navigationDrawer = navigationDrawer;
     this.#mobileDrawerContainer = mobileDrawerContainer;
     this.#skipToContentButton = skipToContentButton;
-    this.#mobileDrawerContent = mobileDrawerContent;
 
     this.#init();
   }
@@ -33,6 +30,7 @@ class App {
   #init() {
     setupSkipToContent(this.#skipToContentButton, this.#content);
     this.#setupDrawer();
+    this.#setupNavigationList();
   }
 
   #setupNavigationList() {
@@ -42,12 +40,27 @@ class App {
       this.#mobileDrawerContainer.querySelector(
         "#mobile-navigation-drawer-content",
       ).innerHTML = generateNavigation();
-      return;
+    } else {
+      this.#navigationDrawer.innerHTML = generateNavigationAfterLogin();
+      this.#mobileDrawerContainer.querySelector(
+        "#mobile-navigation-drawer-content",
+      ).innerHTML = generateNavigationAfterLogin();
     }
-    this.#navigationDrawer.innerHTML = generateNavigationAfterLogin();
-    this.#mobileDrawerContainer.querySelector(
+    this.#attachMobileNavLinkListeners();
+  }
+
+  #attachMobileNavLinkListeners() {
+    const container = this.#mobileDrawerContainer.querySelector(
       "#mobile-navigation-drawer-content",
-    ).innerHTML = generateNavigationAfterLogin();
+    );
+    if (!container) return;
+    container.addEventListener("click", (e) => {
+      const link = e.target.closest("a");
+      if (!link) return;
+      this.#mobileDrawerContainer.setAttribute("aria-hidden", "true");
+      this.#mobileDrawerContainer.classList.add("-right-100");
+      this.#mobileDrawerContainer.classList.remove("right-0");
+    });
   }
 
   #setupDrawer() {
@@ -68,8 +81,6 @@ class App {
         this.#mobileDrawerContainer.classList.add("-right-100");
         this.#mobileDrawerContainer.classList.remove("right-0");
       });
-
-    console.log(this.#mobileDrawerContent.querySelectorAll("a"));
   }
 
   async renderPage() {

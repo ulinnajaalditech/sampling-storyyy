@@ -10,9 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     navigationDrawer: document.querySelector("#navigation-drawer"),
     mobileDrawerContainer: document.querySelector("#mobile-navigation-drawer"),
     skipToContentButton: document.querySelector("#skip-to-content-button"),
-    mobileDrawerContent: document.querySelector(
-      "#mobile-navigation-drawer-content",
-    ),
   });
   await app.renderPage();
 
