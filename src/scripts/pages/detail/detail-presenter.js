@@ -4,7 +4,8 @@ export default class HomePresenter {
   #view;
   #model;
 
-  constructor({ view, model }) {
+  constructor(storyId, { view, model }) {
+    this.storyId = storyId;
     this.#view = view;
     this.#model = model;
   }
@@ -20,18 +21,15 @@ export default class HomePresenter {
     }
   }
 
-  async onGetStories() {
+  async onGetStory() {
     this.#view.showLoader();
 
     try {
       await this.initMap();
-      const response = await this.#model.GetStories();
+      const response = await this.#model.GetStory(this.storyId);
+      const results = await storyMapper(response?.story);
 
-      const results = await Promise.all(
-        response?.listStory?.map((story) => storyMapper(story)) || [],
-      );
-
-      this.#view.renderStories(response?.message || "success", results || []);
+      this.#view.renderStory(response?.message || "success", results);
     } catch (error) {
       console.log(error);
     } finally {

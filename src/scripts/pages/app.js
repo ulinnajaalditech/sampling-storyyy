@@ -1,5 +1,3 @@
-import "toastify-js/src/toastify.css";
-
 import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
 import { generateNavigation, generateNavigationAfterLogin } from "../template";

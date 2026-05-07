@@ -5,12 +5,14 @@ import {
   checkAuthenticatedRoute,
   checkUnauthenticatedRouteOnly,
 } from "../utils/auth";
+import DetailPage from "../pages/detail/detail-page";
 
 const routes = {
   "/login": () => checkUnauthenticatedRouteOnly(new LoginPage()),
   "/register": () => checkUnauthenticatedRouteOnly(new RegisterPage()),
 
   "/": () => checkAuthenticatedRoute(new HomePage()),
+  "/story/:id": () => checkAuthenticatedRoute(new DetailPage()),
 };
 
 export default routes;

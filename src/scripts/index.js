@@ -1,5 +1,7 @@
 // CSS imports
 import "../styles/styles.css";
+import "leaflet/dist/leaflet.css";
+import "toastify-js/src/toastify.css";
 
 import App from "./pages/app";
 

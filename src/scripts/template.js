@@ -18,7 +18,7 @@ export const generateNavigationAfterLogin = () => {
 export const storyCard = (story) => {
   return `
      <div class="card">
-        <p class="text-3xl">${story.name}</p>
+        <p class="text-3xl"><a href="#/story/${story.id}">${story.name}</a></p>
         <div class="relative h-40 w-auto bg-white">
           <img
             src="${story.photoUrl}"
@@ -26,8 +26,9 @@ export const storyCard = (story) => {
             class="w-full h-full object-contain border"
           />
         </div>
-        <p>${story.description}</p>
-        <div>
+        <p class="line-clamp-1">${story.description}</p>
+        <div class="flex items-center justify-between">
+        ${story.location?.placeName ? `<p>${story.location.placeName}</p>` : `<p>Location not found</p>`}
           <p>${new Date(story.createdAt).toLocaleDateString()}</p>
         </div>
       </div>
